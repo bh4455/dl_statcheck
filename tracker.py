@@ -32,24 +32,11 @@ def get_player_name(steam_id):
 
 
 def generate_summary(steam_id, top_k=None):
-    resp = requests.get(f"https://statlocker.gg/api/profile/data/matches/{steam_id}/concise?limit=1")
-    resp.raise_for_status()
-    data = resp.json()
-
-    profile = data.get("profileAggregateStats")
-    if not profile:
-        print(f"  No profile data found for {steam_id}")
-        return None, None
-
-    total = profile.get("totalMatches", 0)
-    if not total:
-        print(f"  No matches found for {steam_id}")
-        return None, None
-
-    resp = requests.get(f"https://statlocker.gg/api/profile/data/matches/{steam_id}/concise?limit={total}")
+    resp = requests.get(f"https://statlocker.gg/api/profile/data/matches/{steam_id}/true?gameMode=1")
     resp.raise_for_status()
     data = resp.json()
     matches = data["matchHistory"]
+    total = data["profileAggregateStats"]["totalMatches"]
     print(f"  Fetched {len(matches)} / {total} matches")
 
     heroes = defaultdict(lambda: {"games": 0, "wins": 0, "mvp_total": 0, "mvp_count": 0, "kda_total": 0})
